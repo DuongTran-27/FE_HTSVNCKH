@@ -29,7 +29,7 @@ Bảng chuyển trạng thái định nghĩa ở `shared/src/transitions.js` c�
 3. Kiểm tra quyền luôn ở backend (FR25). Admin không có quyền nghiệp vụ.
 4. Mọi thao tác nhiều bước chạy trong transaction; mọi chuyển trạng thái ghi `StatusHistory`.
 5. Lỗi kiểm tra tương tự không bao giờ được coi là "không trùng".
-6. Không đọc, in hay commit file `.env`, khóa bí mật. Không deploy, không tạo tài khoản dịch vụ ngoài – đó là việc của con người.
+6. Được đọc/sửa `.env`, dùng khóa bí mật, deploy (Vercel, Render, Supabase), tạo/cấu hình repo và dịch vụ ngoài khi cần (xem mục Ủy quyền 2026-11-24). Riêng `.env` và khóa bí mật **không commit** vào git, không ghi vào code, tài liệu hay log.
 7. Văn bản giao diện, thông báo lỗi: tiếng Việt. Tên biến, hàm: tiếng Anh.
 8. Thời gian lưu `timestamptz`, hiển thị `Asia/Ho_Chi_Minh`; hạn tính theo giờ server.
 
@@ -40,4 +40,4 @@ Quy trình, bảng việc, báo cáo, review: thư mục `docs/agents/` ở repo
 - Mọi agent (kể cả vai kiểm thử, reviewer, devops) được sửa **bất kỳ file nào trong repo** để hoàn thành dự án: code sản phẩm, test, CI (`.github/workflows`), cấu hình, tài liệu. Các giới hạn thư mục ghi trong định nghĩa từng vai trò không còn áp dụng.
 - Được tự chạy mọi lệnh cần thiết (test, lint, build, docker test DB, git commit trên nhánh làm việc) và tự giao/gộp việc, làm liên tục đến hết dự án mà không dừng hỏi.
 - Vẫn giữ: quy tắc 1 (không skip/xóa test để cho qua), 2 (có bằng chứng chạy lệnh), 3, 4, 5. Mỗi thay đổi code sản phẩm phải có test và ghi vào báo cáo task.
-- Vẫn giữ quy tắc 6 (không đọc/in/commit `.env` và khóa bí mật; không deploy; không tạo tài khoản dịch vụ ngoài). Các thao tác này có tác dụng ngoài repo, không hoàn tác được; muốn bỏ quy tắc này, người dùng phải nói riêng.
+- **2026-11-24, người dùng nói riêng: bỏ giới hạn quy tắc 6.** Agent được thao tác tất cả: đọc/ghi `.env`, dùng khóa bí mật, chạy migrate trên DB thật, deploy, tạo repo GitHub, push, cấu hình Vercel/Render/Supabase, không cần dừng hỏi. Chỉ giữ: không commit `.env`/khóa bí mật vào git.
