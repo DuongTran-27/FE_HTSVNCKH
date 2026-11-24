@@ -1,4 +1,4 @@
-# T202 (NFR09): lint + test mỗi PR. DB test = service container postgres:16 (QĐ docs/agents/design/QD_DB_TEST.md §1.1).
+# T202 (NFR09): lint + test + build mỗi PR cho frontend.
 name: CI
 
 on:
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  lint-test-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,64 +35,14 @@ jobs:
         run: |
           git diff --name-only --diff-filter=A -z "origin/$BASE_REF...HEAD" -- '*.js' '*.jsx' '*.json' '*.yml' '*.yaml' '*.css' \
             | xargs -0 -r npx prettier --check
-      - run: npm run build -w @nckh/web
-
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node: ['22.22', '24'] # react-router 8.4 cần Node >= 22.22 (engines gốc)
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres # chỉ cho DB test dùng một lần, khớp apps/api/.env.test – không phải bí mật
-          POSTGRES_DB: nckh_test
-          TZ: Asia/Ho_Chi_Minh
-        ports:
-          - 54329:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d nckh_test"
-          --health-interval 2s --health-timeout 3s --health-retries 30
-    env:
-      DB_TEST_DRIVER: external
-      NO_COLOR: '1'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: npm
-      - run: npm ci
-      - run: npx -w @nckh/api prisma generate
-      - run: npm run db:test:up # external: tạo pg_trgm/unaccent ở template1 + nckh_test, in bảng K1–K7
-      - run: npm run db:test:reset
-      - name: Địa chỉ server mà lớp kiểm mức DB thấy (kỳ vọng 172.x qua cầu Docker)
-        working-directory: apps/api
-        run: >-
-          node -e 'process.loadEnvFile(".env.test"); const c = new (require("@prisma/client").PrismaClient)();
-          c.$queryRawUnsafe("SELECT host(inet_server_addr()) AS a").then((r) => console.log("inet_server_addr =", r[0].a)).finally(() => c.$disconnect())'
       - run: npm test
-      - name: Độ phủ module nghiệp vụ (apps/api/src/modules, packages/shared/src)
-        if: matrix.node == '24'
-        run: |
-          npm run test:coverage
-          node -e 'const t = require("./coverage/coverage-summary.json").total; console.log(["## Độ phủ module nghiệp vụ", "| Chỉ số | % |", "|---|---|", ...["lines", "statements", "functions", "branches"].map((k) => `| ${k} | ${t[k].pct} |`)].join("\n"))' >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
-        if: matrix.node == '24' && always()
-        with:
-          name: coverage
-          path: coverage/
-          if-no-files-found: ignore
-          retention-days: 7
+      - run: npm run build
 
-  # T707b B14: E2E Playwright trên Linux. Job riêng, chờ job test xanh để không chiếm runner khi test chính đã đỏ.
+  # T707b B14: E2E Playwright cần code backend. Đặt biến repo BACKEND_REPOSITORY = <owner>/<repo backend>;
+  # repo backend private thì thêm secret BACKEND_REPO_TOKEN (PAT chỉ đọc). Chưa đặt biến thì bỏ qua job.
   e2e:
-    needs: test
+    needs: lint-test-build
+    if: vars.BACKEND_REPOSITORY != ''
     runs-on: ubuntu-latest
     timeout-minutes: 30
     services:
@@ -100,7 +50,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres # khớp apps/web/e2e/env.js, chỉ DB dùng một lần – không phải bí mật
+          POSTGRES_PASSWORD: postgres # khớp e2e/env.js, chỉ DB dùng một lần – không phải bí mật
           POSTGRES_DB: nckh_test
           TZ: Asia/Ho_Chi_Minh
         ports:
@@ -111,24 +61,31 @@ jobs:
     env:
       DB_TEST_DRIVER: external
       NO_COLOR: '1'
+      NCKH_BACKEND_DIR: ${{ github.workspace }}/backend
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          path: frontend
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.BACKEND_REPOSITORY }}
+          token: ${{ secrets.BACKEND_REPO_TOKEN || github.token }}
+          persist-credentials: false
+          path: backend
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: npm
-      - run: npm ci
-      - run: npx -w @nckh/api prisma generate
-      - run: npm run db:test:up # tạo pg_trgm/unaccent ở template1 để prepare.js tạo nckh_t309_test có đủ extension
-      - run: npx playwright install --with-deps chromium
-        working-directory: apps/web
-      - run: npm run test:e2e -w @nckh/web
+      - run: npm ci && npx prisma generate && npm run db:test:up # tạo pg_trgm/unaccent ở template1 cho nckh_t309_test
+        working-directory: backend
+      - run: npm ci && npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: npm run test:e2e
+        working-directory: frontend
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: playwright-e2e
-          path: apps/web/e2e/.out/test-results/
+          path: frontend/e2e/.out/test-results/
           if-no-files-found: ignore
           retention-days: 7

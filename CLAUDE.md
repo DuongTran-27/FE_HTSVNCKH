@@ -3,7 +3,7 @@
 Đọc file này đầu mỗi phiên. Mọi agent (kể cả phiên chính) phải tuân thủ.
 
 ## Dự án
-Website quản lý NCKH sinh viên Khoa CNTT. Đặc tả gốc: `docs/DAC_TA.md` (xuất từ Claude Doc). Lộ trình: `docs/LO_TRINH.md`.
+Website quản lý NCKH sinh viên Khoa CNTT. Repo này là **frontend**. Tài liệu chung (đặc tả `docs/DAC_TA.md`, lộ trình `docs/LO_TRINH.md`, quy trình agent) nằm ở repo backend `../Website_HTWLHD_SV_NCKH_backend/docs/`.
 Mục tiêu M1–M5, FR01–FR27, NFR01–NFR10 trong đặc tả là **nguồn sự thật**. Code mâu thuẫn đặc tả = lỗi.
 
 ## Công nghệ (không tự ý đổi)
@@ -13,15 +13,15 @@ Cloudinary · pg_trgm + TF-IDF JS · Recharts + CSV · Vitest, Supertest, Playwr
 Muốn đổi/thêm thư viện → ghi đề xuất vào báo cáo task, chờ agent `kien-truc-su` duyệt.
 
 ## Cấu trúc
-`packages/shared` (enum, TRANSITIONS, schema Zod dùng chung) · `apps/api` · `apps/web` · `docs/`.
-Bảng chuyển trạng thái chỉ được định nghĩa ở `packages/shared/src/transitions.js`.
+Frontend tách khỏi monorepo 2026-11-24; backend (API + DB) ở repo `../Website_HTWLHD_SV_NCKH_backend`. Frontend chỉ gọi API, không truy cập DB.
+`src/` · `tests/` · `e2e/` · `shared/` (workspace `@nckh/shared`, bản sao của `shared/` ở backend).
+Bảng chuyển trạng thái định nghĩa ở `shared/src/transitions.js` của **backend**; ở đây chỉ là bản chép y hệt – sửa ở backend rồi chép sang.
 
 ## Lệnh
-- `npm test` – toàn bộ unit + integration
+- `npm test` – unit test
 - `npm run lint`
-- `npm run test:e2e -w @nckh/web` – Playwright
-- `npm run build -w @nckh/web`
-- Database test: `docker compose -f docker-compose.test.yml up -d` (Postgres 16 có pg_trgm, unaccent)
+- `npm run build`
+- `npm run test:e2e` – Playwright; cần repo backend cạnh bên (hoặc `NCKH_BACKEND_DIR`) và DB test của backend đang chạy
 
 ## Quy tắc bắt buộc
 1. Không sửa/xóa/skip test để cho qua. Test sai đặc tả → ghi rõ lý do trong báo cáo và để reviewer quyết.
@@ -34,8 +34,7 @@ Bảng chuyển trạng thái chỉ được định nghĩa ở `packages/shared
 8. Thời gian lưu `timestamptz`, hiển thị `Asia/Ho_Chi_Minh`; hạn tính theo giờ server.
 
 ## Phối hợp agent
-Quy trình chi tiết: `docs/agents/QUY_TRINH.md`. Bảng việc: `docs/agents/BANG_CONG_VIEC.md`.
-Báo cáo task: `docs/agents/reports/TASK-xxx.md`. Review: `docs/agents/reviews/TASK-xxx-<agent>-v<n>.md`.
+Quy trình, bảng việc, báo cáo, review: thư mục `docs/agents/` ở repo backend.
 
 ## Ủy quyền của chủ dự án (2026-11-08, theo yêu cầu trực tiếp của người dùng)
 - Mọi agent (kể cả vai kiểm thử, reviewer, devops) được sửa **bất kỳ file nào trong repo** để hoàn thành dự án: code sản phẩm, test, CI (`.github/workflows`), cấu hình, tài liệu. Các giới hạn thư mục ghi trong định nghĩa từng vai trò không còn áp dụng.

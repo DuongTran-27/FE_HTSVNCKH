@@ -7,7 +7,7 @@ dist/
 coverage/
 playwright-report/
 *.zip
-apps/web/e2e/.out/
+e2e/.out/
 
 # Dữ liệu người thật cho demo (họ tên, MSSV, email) – chỉ giữ trên máy, không commit
 *.local.json

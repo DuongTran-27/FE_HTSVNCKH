@@ -9,17 +9,19 @@ export default [
   js.configs.recommended,
   {
     languageOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-    // Quy ước sẵn có: tham số bắt buộc nhưng không dùng đặt tiền tố "_" (vd. error handler Express 4 tham số).
+    // Quy ước sẵn có: tham số bắt buộc nhưng không dùng đặt tiền tố "_".
     rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }] },
   },
-  { files: ['apps/api/**', 'packages/shared/**', '*.js'], languageOptions: { globals: globals.node } },
   {
-    files: ['apps/web/**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx}'],
     languageOptions: { globals: globals.browser, parserOptions: { ecmaFeatures: { jsx: true } } },
     plugins: { 'react-hooks': reactHooks },
     rules: { 'react-hooks/rules-of-hooks': 'error', 'react-hooks/exhaustive-deps': 'warn' },
   },
   // middleware.js chạy ở Vercel (process.env), không phải trình duyệt
-  { files: ['apps/web/vite.config.js', 'apps/web/middleware.js'], languageOptions: { globals: globals.node } },
+  {
+    files: ['shared/**', 'eslint.config.js', 'vite.config.js', 'middleware.js'],
+    languageOptions: { globals: globals.node },
+  },
   prettier, // tắt mọi luật định dạng trùng Prettier – đặt cuối
 ];
