@@ -3,7 +3,7 @@
 Đọc file này đầu mỗi phiên. Mọi agent (kể cả phiên chính) phải tuân thủ.
 
 ## Dự án
-Website quản lý NCKH sinh viên Khoa CNTT. Repo này là **frontend**. Tài liệu chung (đặc tả `docs/DAC_TA.md`, lộ trình `docs/LO_TRINH.md`, quy trình agent) nằm ở repo backend `../Website_HTWLHD_SV_NCKH_backend/docs/`.
+Website quản lý NCKH sinh viên Khoa CNTT. Repo này là **frontend**. Tài liệu chung (đặc tả `docs/DAC_TA.md`, lộ trình `docs/LO_TRINH.md`, quy trình agent) nằm ở repo backend `../BE_HTSVNCKH/docs/`.
 Mục tiêu M1–M5, FR01–FR27, NFR01–NFR10 trong đặc tả là **nguồn sự thật**. Code mâu thuẫn đặc tả = lỗi.
 
 ## Công nghệ (không tự ý đổi)
@@ -13,7 +13,7 @@ Cloudinary · pg_trgm + TF-IDF JS · Recharts + CSV · Vitest, Supertest, Playwr
 Muốn đổi/thêm thư viện → ghi đề xuất vào báo cáo task, chờ agent `kien-truc-su` duyệt.
 
 ## Cấu trúc
-Frontend tách khỏi monorepo 2026-11-24; backend (API + DB) ở repo `../Website_HTWLHD_SV_NCKH_backend`. Frontend chỉ gọi API, không truy cập DB.
+Frontend tách khỏi monorepo 2026-11-24; backend (API + DB) ở repo `../BE_HTSVNCKH`. Frontend chỉ gọi API, không truy cập DB.
 `src/` · `tests/` · `e2e/` · `shared/` (workspace `@nckh/shared`, bản sao của `shared/` ở backend).
 Bảng chuyển trạng thái định nghĩa ở `shared/src/transitions.js` của **backend**; ở đây chỉ là bản chép y hệt – sửa ở backend rồi chép sang.
 

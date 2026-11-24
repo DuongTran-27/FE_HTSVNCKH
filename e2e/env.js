@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 // Repo backend (tách 2026-11-24): E2E dựng DB và chạy API bằng code backend. Mặc định là thư mục bên cạnh repo này.
 export const BACKEND_DIR = path.resolve(
-  process.env.NCKH_BACKEND_DIR ?? fileURLToPath(new URL('../../Website_HTWLHD_SV_NCKH_backend', import.meta.url)),
+  process.env.NCKH_BACKEND_DIR ?? fileURLToPath(new URL('../../BE_HTSVNCKH', import.meta.url)),
 );
 export const API_PORT = 4309;
 export const WEB_PORT = 5309;

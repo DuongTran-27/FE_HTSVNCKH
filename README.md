@@ -1,7 +1,7 @@
 # Hệ thống quản lý NCKH sinh viên – Khoa CNTT (Frontend)
 
 React + Vite + React Router + Tailwind + TanStack Query. Chỉ chứa giao diện; mọi dữ liệu lấy qua API REST của repo backend
-`Website_HTWLHD_SV_NCKH_backend` (đặc tả, lộ trình, vận hành nằm ở `docs/` của repo đó).
+`BE_HTSVNCKH` (đặc tả, lộ trình, vận hành nằm ở `docs/` của repo đó).
 
 | Thư mục | Nội dung |
 |---|---|
@@ -25,7 +25,7 @@ npm run build      # → dist/
 ## E2E
 
 E2E dựng DB `nckh_t309_test` và chạy API bằng code của repo backend. Mặc định repo backend nằm cạnh repo này
-(`../Website_HTWLHD_SV_NCKH_backend`); đặt `NCKH_BACKEND_DIR` nếu ở chỗ khác. Ở repo backend cần `npm ci`, `npx prisma generate`
+(`../BE_HTSVNCKH`); đặt `NCKH_BACKEND_DIR` nếu ở chỗ khác. Ở repo backend cần `npm ci`, `npx prisma generate`
 và DB test đang chạy (`npm run db:test:up`).
 
 ```bash
