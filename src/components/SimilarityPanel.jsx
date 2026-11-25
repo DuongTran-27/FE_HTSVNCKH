@@ -1,4 +1,4 @@
-import { SIMILARITY_LEVEL_LABEL } from '@nckh/shared';
+import { SIMILARITY_LEVEL_LABEL, TOPIC_STATUS_LABEL } from '@nckh/shared';
 import { fmtDateTime } from '../lib/format.js';
 import { Badge } from './ui.jsx';
 
@@ -53,7 +53,7 @@ function Match({ m }) {
   return (
     <li className="rounded-xl border bg-card p-4 shadow-sm">
       <p className="break-words font-medium">{m.code}{m.title && ` – ${m.title}`}</p>
-      <p className="text-sm text-slate-700">{m.academicYear}{m.field ? ` · ${m.field}` : ''}{m.status ? ` · ${m.status}` : ''}</p>
+      <p className="text-sm text-slate-700">{m.academicYear}{m.field ? ` · ${m.field}` : ''}{m.status ? ` · ${TOPIC_STATUS_LABEL[m.status] ?? m.status}` : ''}</p>
       <Score label="Điểm tên" value={m.titleScore} /><Score label="Điểm nội dung" value={m.contentScore} />
       <Badge tone={LEVEL_TONE[m.level]}>{SIMILARITY_LEVEL_LABEL[m.level]}</Badge>
       {m.matchedKeywords?.length > 0 && <p className="mt-1 break-words text-sm">Từ khóa trùng: {m.matchedKeywords.join(', ')}</p>}

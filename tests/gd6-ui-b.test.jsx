@@ -302,6 +302,13 @@ describe('G5 cờ chưa kiểm tra', () => {
     render(<SimilarityPanel check={{ status: 'OK', level: 'HIGH', createdAt: '2027-01-01T00:00:00Z', matches: [], justificationMissing: true }} />);
     expect(screen.getByText('Chưa có giải trình')).toBeTruthy();
   });
+
+  it('panel: trạng thái đề tài trùng hiện nhãn tiếng Việt, không hiện mã enum', () => {
+    const m = { code: 'NCKH-2026-0019', title: 'Tóm tắt văn bản', academicYear: '2026-2027', field: 'Trí tuệ nhân tạo', status: 'IN_PROGRESS', titleScore: 0.76, contentScore: 0.91, level: 'HIGH' };
+    render(<SimilarityPanel check={{ status: 'OK', level: 'HIGH', createdAt: '2027-01-01T00:00:00Z', matches: [m] }} />);
+    expect(screen.getByText('2026-2027 · Trí tuệ nhân tạo · Đang thực hiện')).toBeTruthy();
+    expect(screen.queryByText(/IN_PROGRESS/)).toBeNull();
+  });
 });
 
 describe('MINOR T607a', () => {
