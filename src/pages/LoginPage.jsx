@@ -12,40 +12,6 @@ import { FormField } from '../components/FormField.jsx';
 import { btn, btnPrimary } from '../components/ui.jsx';
 import { Eye, EyeOff, FlaskConical } from 'lucide-react';
 
-// Panel trái luôn nền navy, tờ hồ sơ luôn giấy trắng: dùng mã màu cố định, không theo thang blue-*/slate-* đảo ở chế độ tối
-// Vòng đời một đề tài trong hệ thống (chuỗi thật, theo bảng chuyển trạng thái) – minh họa trên tờ hồ sơ ở panel trái
-const LIFECYCLE = ['Đăng ký đề tài', 'Xét duyệt', 'Thực hiện', 'Bảo vệ trước hội đồng', 'Nghiệm thu'];
-
-/**
- * Panel trái (≥ lg): tờ hồ sơ đề tài mẫu (hư cấu) đã đi hết vòng đời, có con dấu son "Đã nghiệm thu" đóng một lần khi
- * tải trang – cùng mô-típ con dấu ở trang chi tiết đề tài. Trang trí, trình đọc màn hình bỏ qua.
- */
-function DossierSheet() {
-  return (
-    <div aria-hidden="true" className="relative mt-10 max-w-xl">
-      <div className="rounded-lg bg-white p-8 text-[#101129] shadow-[0_24px_48px_-12px_rgb(0_0_0/0.45)]">
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
-          <dt className="text-[#5b6178]">Mã đề tài</dt><dd className="font-semibold tabular-nums">NCKH-2026-0031</dd>
-          <dt className="text-[#5b6178]">Đợt</dt><dd>Đợt 1, năm học 2026–2027</dd>
-        </dl>
-        <p className="mt-4 text-xl leading-snug font-semibold text-balance">Hệ thống gợi ý học liệu cho sinh viên năm nhất</p>
-        <ol className="mt-6 space-y-3 border-t border-[#e2e4e9] pt-5">
-          {LIFECYCLE.map((step, i) => (
-            <li key={step} className="flex items-center gap-3">
-              <span className={`grid size-7 shrink-0 place-items-center rounded-full text-sm font-semibold tabular-nums ${i === LIFECYCLE.length - 1 ? 'bg-navy text-vlu-gold' : 'bg-[#e2e5f4] text-navy'}`}>{i + 1}</span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <span className="absolute -right-8 bottom-10 inline-flex animate-stamp flex-col items-center whitespace-nowrap rounded-md border-[5px] border-double border-seal bg-white/85 px-6 py-2 text-seal">
-        <span className="text-2xl leading-tight font-bold">Đã nghiệm thu</span>
-        <span className="text-sm font-semibold">Khoa Công nghệ Thông tin</span>
-      </span>
-    </div>
-  );
-}
-
 // Chỉ dev: tài khoản dữ liệu mẫu (prisma/seed.js). Bản build production thay DEV = false nên mảng và mật khẩu bị loại khỏi bundle.
 const DEMO_ACCOUNTS = import.meta.env.DEV ? [
   ['Quản trị viên', 'QT001'], ['Cán bộ khoa', 'CB001'], ['Giảng viên', 'GV001'], ['Sinh viên', '2374801030010'],
@@ -105,12 +71,12 @@ export function LoginPage() {
   return (
     <main className="grid min-h-screen lg:grid-cols-[7fr_5fr]">
       {/* Panel nhận diện (≥ lg): thương hiệu, câu giới thiệu, tờ hồ sơ có con dấu */}
-      <div className="hidden overflow-hidden bg-navy px-14 py-12 text-white xl:px-20 lg:flex lg:flex-col lg:justify-between">
+      <div className="hidden overflow-hidden bg-navy px-14 py-12 text-white xl:px-20 lg:flex lg:flex-col lg:justify-between lg:gap-10">
         <p className="flex items-center gap-3 text-lg font-bold"><span className="grid size-9 place-items-center rounded-lg bg-vlu-red"><FlaskConical aria-hidden="true" className="size-5" /></span>Nghiên cứu khoa học sinh viên</p>
         <div>
-          <p className="text-5xl leading-[1.08] font-semibold tracking-tight"><span className="block">Từ ý tưởng đến nghiệm thu,</span><span className="block">trên một hồ sơ.</span></p>
+          {/* Cỡ chữ theo bề ngang: text-5xl cố định làm dòng 1 rớt chữ "thu," ở màn 1280 */}
+          <p className="text-[clamp(2.25rem,3.4vw,3rem)] leading-[1.08] font-semibold tracking-tight"><span className="block">Từ ý tưởng đến nghiệm thu,</span><span className="block">trên một hồ sơ.</span></p>
           <p className="mt-5 max-w-md text-lg leading-relaxed text-[#e2e5f4]">Sinh viên, giảng viên và cán bộ khoa cùng theo dõi một đề tài qua từng bước.</p>
-          <DossierSheet />
         </div>
         <p className="text-sm text-[#e2e5f4]/80">Khoa Công nghệ Thông tin, Trường Đại học Văn Lang</p>
       </div>
